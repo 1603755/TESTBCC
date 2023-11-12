@@ -1,0 +1,28 @@
+# Use the official Rust image as a build environment
+FROM rust:latest as builder
+
+# Set the working directory
+WORKDIR /usr/src/src
+
+# Copy the dependency manifest
+COPY . .
+
+# Build the dependencies (but do not include binaries)
+RUN cargo build --release
+
+# Copy the source code
+COPY . .
+
+# Use a smaller base image for the final build docker pull ustcmirror/freebsd-ports
+FROM ubuntu:latest
+# ustcmirror/freebsd-ports:latest
+# Build the application with all required dependencies
+RUN apt-get update && apt-get install -y libssl-dev  && apt-get install -y openssl
+# Set the working directory
+WORKDIR /usr/src/src
+
+# Copy the compiled binary from the previous build
+COPY --from=builder /usr/src/natura/core/target/release/natura .
+EXPOSE 443
+# Run the Rust application
+CMD ["./src"]
