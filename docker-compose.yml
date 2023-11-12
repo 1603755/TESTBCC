@@ -1,0 +1,30 @@
+version: '3'
+
+services:
+  rust_app:
+    image: rust:latest
+    working_dir: /app
+    volumes:
+      - ./api:/app
+    command: cargo run
+
+  mysql_db:
+    image: mysql:latest
+    environment:
+      MYSQL_ROOT_PASSWORD: root_password
+      MYSQL_DATABASE: mydatabase
+      MYSQL_USER: user
+      MYSQL_PASSWORD: password
+    ports:
+      - "3306:3306"
+  
+  web:
+    image: almalinux:latest
+    ports:
+      - "4321:4321"
+    volumes:
+      - ./web:/usr/share/nginx/html
+    depends_on:
+      - rust_app
+      - mysql_db  
+
