@@ -35,7 +35,7 @@ async fn main() -> std::io::Result<()> {
             .service(process_change_door)
             .route("/hey", web::get().to(manual_hello))
     })
-    .bind(("0.0.0.0", 8083))?
+    .bind(("0.0.0.0", 80))?
     .run()
     .await
 }
