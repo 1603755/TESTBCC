@@ -73,7 +73,7 @@ async fn process_change_door  (doors: web::Json<Door>) -> Result<HttpResponse, A
         return Err(error::ErrorInternalServerError("Failed to connect Database"));
     }
     let mut conn = conn.unwrap();
-    let query = format!("SELECT * FROM door_table WHERE id = {}", doors.id);
+    let query = format!("SELECT * FROM door_registry WHERE id = {}", doors.id);
     let result = conn.query_map(query, |(id, door1, door2)| {
         Door {
             id,
@@ -86,10 +86,10 @@ async fn process_change_door  (doors: web::Json<Door>) -> Result<HttpResponse, A
     }
     let result = result.unwrap();
     if result.len() > 0 {
-        let query = format!("UPDATE door_table SET door1 = {}, door2 = {} WHERE id = {}", doors.door1, doors.door2, doors.id);
+        let query = format!("UPDATE door_registry SET door1 = {}, door2 = {} WHERE id = {}", doors.door1, doors.door2, doors.id);
         conn.query_drop(query).expect("Failed to update data");
     } else {
-        let query = format!("INSERT INTO door_table (id, door1, door2) VALUES ({}, {}, {})", doors.id, doors.door1, doors.door2);
+        let query = format!("INSERT INTO door_registry (id, door1, door2) VALUES ({}, {}, {})", doors.id, doors.door1, doors.door2);
         conn.query_drop(query).expect("Failed to insert data");
     }
     Ok(HttpResponse::Ok().body("OK"))
@@ -102,7 +102,7 @@ async fn process_get_door () -> Result<HttpResponse, ActixError> {
         return Err(error::ErrorInternalServerError("Failed to connect Database"));
     }
     let mut conn = conn.unwrap();
-    let query = format!("SELECT * FROM door_table");
+    let query = format!("SELECT * FROM door_registry");
     let result = conn.query_map(query, |(id, door1, door2)| {
         Door {
             id,
