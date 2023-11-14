@@ -19,7 +19,6 @@ pub fn check_or_create_table() -> Result<(), ActixError> {
     let create_table_query = r"
         CREATE TABLE IF NOT EXISTS rfid_table (
             id INT AUTO_INCREMENT PRIMARY KEY,
-            hash VARCHAR(255),
             antennaPort INT,
             epc VARCHAR(255),
             timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP
@@ -34,8 +33,7 @@ pub fn check_or_create_table() -> Result<(), ActixError> {
         CREATE TABLE IF NOT EXISTS door_registry (
             id INT AUTO_INCREMENT PRIMARY KEY,
             porta1 INT,
-            porta2 INT,
-            hash VARCHAR(255)
+            porta2 INT
         );
     ";
     conn.query_drop(create_table_query).expect("Failed to create table");
