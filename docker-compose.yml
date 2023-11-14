@@ -7,6 +7,10 @@ services:
     volumes:
       - ./api:/app
     command: cargo run
+    ports:
+      - "8080:8080"
+    depends_on:
+      - mysql_db
 
   mysql_db:
     image: mysql:latest

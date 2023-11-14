@@ -23,6 +23,6 @@ WORKDIR /usr/src/src
 
 # Copy the compiled binary from the previous build
 COPY --from=builder /usr/src/natura/core/target/release/natura .
-EXPOSE 443
+EXPOSE 8080
 # Run the Rust application
 CMD ["./src"]
