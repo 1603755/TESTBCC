@@ -6,7 +6,8 @@ use std::env;
 use db::check_or_create_table;
 use api::services::{
     process_request,
-    process_change_door
+    process_change_door,
+    process_get_door
 };
 
 #[get("/")]
@@ -33,6 +34,7 @@ async fn main() -> std::io::Result<()> {
             .service(echo)
             .service(process_request)
             .service(process_change_door)
+            .service(process_get_door)
             .route("/hey", web::get().to(manual_hello))
     })
     .bind(("0.0.0.0", 80))?

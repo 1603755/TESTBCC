@@ -4,7 +4,7 @@ use diesel::prelude::*;
 use diesel::mysql::MysqlConnection;
 use mysql::*;
 use mysql::prelude::*;
-use actix_web::{error, post, web, App, Error as ActixError, HttpResponse};
+use actix_web::{error, post, get, web, App, Error as ActixError, HttpResponse};
 use futures::StreamExt;
 
 // src/db.rs
@@ -95,3 +95,30 @@ async fn process_change_door  (doors: web::Json<Door>) -> Result<HttpResponse, A
     Ok(HttpResponse::Ok().body("OK"))
 }
 
+#[get("/door")]
+async fn process_get_door () -> Result<HttpResponse, ActixError> {
+    let conn = establish_connection();
+    if conn.is_err() {
+        return Err(error::ErrorInternalServerError("Failed to connect Database"));
+    }
+    let mut conn = conn.unwrap();
+    let query = format!("SELECT * FROM door_table");
+    let result = conn.query_map(query, |(id, door1, door2)| {
+        Door {
+            id,
+            door1,
+            door2,
+        }
+    });
+    if result.is_err() {
+        return Err(error::ErrorInternalServerError("Failed to get data from database"));
+    }
+    let result = result.unwrap();
+    let mut response = String::new(); // String::from("[");
+    for door in result {
+        response.push_str(&format!("{{\"door1\": {}, \"door2\": {}}},", door.door1, door.door2));
+    }
+    response.pop();
+    //response.push_str("]");
+    Ok(HttpResponse::Ok().body(response))
+}
