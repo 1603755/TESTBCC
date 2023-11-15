@@ -68,7 +68,9 @@ async fn process_request(requests: web::Json<Vec<Request>>) -> Result<HttpRespon
 #[post("/door-change")]
 async fn process_change_door  (doors: web::Json<Door>) -> Result<HttpResponse, ActixError> {
     //If the door exxists, update the door
+    println!("a");
     let conn = establish_connection();
+    println!("b");
     if conn.is_err() {
         return Err(error::ErrorInternalServerError("Failed to connect Database"));
     }
@@ -81,14 +83,17 @@ async fn process_change_door  (doors: web::Json<Door>) -> Result<HttpResponse, A
             door2,
         }
     });
+    println!("c");
     if result.is_err() {
         return Err(error::ErrorInternalServerError("Failed to get data from database"));
     }
     let result = result.unwrap();
     if result.len() > 0 {
+        println!("d");
         let query = format!("UPDATE door_registry SET door1 = {}, door2 = {} WHERE id = {}", doors.door1, doors.door2, doors.id);
         conn.query_drop(query).expect("Failed to update data");
     } else {
+        println!("e");
         let query = format!("INSERT INTO door_registry (id, door1, door2) VALUES ({}, {}, {})", doors.id, doors.door1, doors.door2);
         conn.query_drop(query).expect("Failed to insert data");
     }

@@ -22,13 +22,17 @@ services:
     ports:
       - "3306:3306"
   
-  web:
-    image: almalinux:latest
+  app:
+    build: ./app
+    expose:
+      - 4321
     ports:
-      - "4321:4321"
+      - 4321:4321
     volumes:
-      - ./web:/usr/share/nginx/html
+      - ./app/src:/srv/app/app/src
+    command: npm run start
     depends_on:
       - rust_app
-      - mysql_db  
+      - mysql_db
+
 
