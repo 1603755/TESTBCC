@@ -6,6 +6,8 @@ interface Props {
 
 const { body, door_num } = Astro.props;
 
+
+
 ---
 
 
@@ -90,46 +92,80 @@ const { body, door_num } = Astro.props;
 <script>
 	
 async function postQuery(id: number, num1: number, num2: number) {
-	let request = new XMLHttpRequest();
-	request.open("POST", "http://127.0.0.1:80/door-change");
-	request.setRequestHeader("Content-Type", "application/json");
-	//"Access-Control-Allow-Origin"
-	//request.setRequestHeader("Access-Control-Allow-Origin", "http://127.0.0.1:80/door-change");
-	request.setRequestHeader("Access-Control-Allow-Methods", "POST");
-	request.setRequestHeader("Access-Control-Allow-Headers", "Content-Type");
-	request.send(JSON.stringify({
-		"id": id,
-		"porta1": num1,
-		"porta2": num2
-	}));
-
-	request.onload = () => {
-		console.log(request.responseText);
-	};
-
-	request.onerror = () => {
-		console.log("error");
-	};
-
+	await fetch("http://127.0.0.1:80 ", {
+		method: "POST",
+		headers: {
+			"Content-Type": "application/json",
+			"Access-Control-Allow-Methods": "POST",
+			"Access-Control-Allow-Headers": "Content-Type"
+		},
+		body: JSON.stringify({
+			"id": id,
+			"porta1": num1,
+			"porta2": num2
+		})
+	})
+	.then((response) => {
+		console.log(response);
+	})
+	.catch((error) => {
+		console.log(error);
+	});
 }
+
+// 	let request = new HttpRequest();
+// 	request.open("POST", "http://127.0.0.1:80/door-change");
+// 	request.setRequestHeader("Content-Type", "application/json");
+// 	request.setRequestHeader("Access-Control-Allow-Methods", "POST");
+// 	request.setRequestHeader("Access-Control-Allow-Headers", "Content-Type");
+// 	request.send(JSON.stringify({
+// 		"id": id,
+// 		"porta1": num1,
+// 		"porta2": num2
+// 	}));
+
+// 	request.onload = () => {
+// 		console.log(request.responseText);
+// 	};
+
+// 	request.onerror = () => {
+// 		console.log("error");
+// 	};
+
+// }
 
 async function getInfo() {
-	let request = new XMLHttpRequest();
-	request.open("GET", "http://127.0.0.1:80/door");
-	request.setRequestHeader("Content-Type", "application/json");
-	request.setRequestHeader("Access-Control-Allow-Origin", "http://127.0.0.1:80");
-	//"Access-Control-Allow-Origin"
-	request.send();
-	//load the response int the conent button e
-	request.onload = () => {
-		console.log(request.responseText);
-	};
-
-	request.onerror = () => {
-		console.log("error");
-	};
-
+	await fetch("http://127.0.0.1:80/door", {
+		method: "GET",
+		headers: {
+			"Content-Type": "application/json",
+			"Access-Control-Allow-Origin": "*"
+		}
+	})
+	.then((response) => {
+		console.log(response);
+	})
+	.catch((error) => {
+		console.log(error);
+	});
 }
+
+// 	let request = new XMLHttpRequest();
+// 	request.open("GET", "http://127.0.0.1:80/door");
+// 	request.setRequestHeader("Content-Type", "application/json");
+// 	request.setRequestHeader("Access-Control-Allow-Origin", "http://127.0.0.1:80");
+// 	//"Access-Control-Allow-Origin"
+// 	request.send();
+// 	//load the response int the conent button e
+// 	request.onload = () => {
+// 		console.log(request.responseText);
+// 	};
+
+// 	request.onerror = () => {
+// 		console.log("error");
+// 	};
+
+// }
 
 const tgt = document.querySelector("#a");
 tgt.addEventListener("click", () => {
