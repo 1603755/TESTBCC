@@ -1,0 +1,1 @@
+C:\Users\Arnau\Documents\GitHub\TESTBCC\api-dummy\target\debug\api-dummy.exe: C:\Users\Arnau\Documents\GitHub\TESTBCC\api-dummy\src\lib.rs C:\Users\Arnau\Documents\GitHub\TESTBCC\api-dummy\src\main.rs
