@@ -1,9 +1,7 @@
 
-use actix_web::{get, post, web, App, HttpResponse, HttpServer, Responder};
+use actix_web::{get, post, web, App, HttpResponse, HttpServer, Responder, http};
+use actix_cors::Cors;
 use api::db;
-use diesel::prelude::*;
-use std::env;
-use db::check_or_create_table;
 use api::services::{
     process_request,
     process_change_door,
@@ -29,11 +27,19 @@ async fn main() -> std::io::Result<()> {
     db::check_or_create_table().unwrap();
     println!("Hello, world!");
     HttpServer::new(|| {
+
+        let cors = Cors::default()
+            .allow_any_origin()
+            .allowed_methods(vec!["GET", "POST"])
+            .allowed_headers(vec![http::header::AUTHORIZATION, http::header::ACCEPT])
+            .allowed_header(http::header::CONTENT_TYPE)
+            .max_age(3600);
+    
         App::new()
             .service(hello)
             .service(echo)
             .service(process_request)
-            .service(process_change_door)
+            .service(web::resource("/door-change").route(web::route().guard(actix_web::guard::Options()).to(process_change_door)))
             .service(process_get_door)
             .route("/hey", web::get().to(manual_hello))
     })

@@ -1,23 +1,9 @@
 extern crate diesel;
 use serde::{Deserialize, Serialize};
-use diesel::prelude::*;
-use diesel::mysql::MysqlConnection;
 use mysql::*;
-use mysql::prelude::*;
-use actix_web::{error, post, get, web, App, Error as ActixError, HttpResponse};
-use futures::StreamExt;
-
-// src/db.rs
-use diesel::prelude::*;
-use std::ops::Deref;
-use mysql::*;
-use mysql::prelude::{*, Queryable};
-use mysql::prelude::*;
-use mysql::{Conn, OptsBuilder};
-
-//use system_time::SystemTime;
-use std::time::SystemTime;
-
+use actix_web::{error, post, get, web, Error as ActixError, HttpResponse};
+use mysql::prelude::Queryable;
+use actix_cors::Cors;
 
 pub const PASSWORD : &str = "root_password";
 pub const USER : &str = "root";
@@ -46,8 +32,8 @@ pub struct Request {
 #[derive(Debug, Serialize, Deserialize)]
 pub struct Door {
     pub id: u32,
-    pub door1: u32,
-    pub door2: u32,
+    pub porta1: u32,
+    pub porta2: u32,
 }
 
 #[post("/request")]
@@ -65,8 +51,7 @@ async fn process_request(requests: web::Json<Vec<Request>>) -> Result<HttpRespon
     Ok(HttpResponse::Ok().body("OK"))
 }
 
-#[post("/door-change")]
-async fn process_change_door  (doors: web::Json<Door>) -> Result<HttpResponse, ActixError> {
+pub async fn process_change_door  (door: web::Json<Door>) -> Result<HttpResponse, ActixError> {
     //If the door exxists, update the door
     println!("a");
     let conn = establish_connection();
@@ -75,12 +60,12 @@ async fn process_change_door  (doors: web::Json<Door>) -> Result<HttpResponse, A
         return Err(error::ErrorInternalServerError("Failed to connect Database"));
     }
     let mut conn = conn.unwrap();
-    let query = format!("SELECT * FROM door_registry WHERE id = {}", doors.id);
-    let result = conn.query_map(query, |(id, door1, door2)| {
+    let query = format!("SELECT * FROM door_registry WHERE id = {}", door.id);
+    let result = conn.query_map(query, |(id, porta1, porta2)| {
         Door {
             id,
-            door1,
-            door2,
+            porta1,
+            porta2,
         }
     });
     println!("c");
@@ -89,12 +74,20 @@ async fn process_change_door  (doors: web::Json<Door>) -> Result<HttpResponse, A
     }
     let result = result.unwrap();
     if result.len() > 0 {
-        println!("d");
-        let query = format!("UPDATE door_registry SET door1 = {}, door2 = {} WHERE id = {}", doors.door1, doors.door2, doors.id);
-        conn.query_drop(query).expect("Failed to update data");
+        if door.porta1 == 1 {
+            let query = format!("UPDATE mydatabase.door_registry SET porta1 = {} WHERE id = {}", door.porta1, door.id);
+            conn.query_drop(query).expect("Failed to update data");
+        } else if door.porta2 == 1 {
+            let query = format!("UPDATE mydatabase.door_registry SET porta2 = {} WHERE id = {}", door.porta2, door.id);
+            conn.query_drop(query).expect("Failed to update data");
+        } else {
+            let query = format!("UPDATE mydatabase.door_registry SET porta1 = {}, porta2 = {} WHERE id = {}", door.porta1, door.porta2, door.id);
+            conn.query_drop(query).expect("Failed to update data");
+        }
+        
     } else {
         println!("e");
-        let query = format!("INSERT INTO door_registry (id, door1, door2) VALUES ({}, {}, {})", doors.id, doors.door1, doors.door2);
+        let query = format!("INSERT INTO mydatabase.door_registry (id, porta1, porta2) VALUES ({}, {}, {})", door.id, door.porta1, door.porta2);
         conn.query_drop(query).expect("Failed to insert data");
     }
     Ok(HttpResponse::Ok().body("OK"))
@@ -108,11 +101,11 @@ async fn process_get_door () -> Result<HttpResponse, ActixError> {
     }
     let mut conn = conn.unwrap();
     let query = format!("SELECT * FROM door_registry");
-    let result = conn.query_map(query, |(id, door1, door2)| {
+    let result = conn.query_map(query, |(id, porta1, porta2)| {
         Door {
             id,
-            door1,
-            door2,
+            porta1,
+            porta2,
         }
     });
     if result.is_err() {
@@ -121,7 +114,7 @@ async fn process_get_door () -> Result<HttpResponse, ActixError> {
     let result = result.unwrap();
     let mut response = String::new(); // String::from("[");
     for door in result {
-        response.push_str(&format!("{{\"door1\": {}, \"door2\": {}}},", door.door1, door.door2));
+        response.push_str(&format!("{{\"porta1\": {}, \"porta2\": {}}},", door.porta1, door.porta2));
     }
     response.pop();
     //response.push_str("]");

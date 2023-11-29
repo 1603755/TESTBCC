@@ -1,24 +1,51 @@
 ---
 interface Props {
-	title: string;
 	body: string;
-	href: string;
+	door_num: string;
 }
 
-const { href, title, body } = Astro.props;
+const { body, door_num } = Astro.props;
+
 ---
 
-<li class="link-card">
-	<a href={href}>
+
+
+<button id="a" class="link-card" >
+	<a href="#">
 		<h2>
-			{title}
-			<span>&rarr;</span>
+			Open Door 1
 		</h2>
-		<p>
-			{body}
-		</p>
 	</a>
-</li>
+</button>
+<button id="b" class="link-card" >
+	<a>
+		<h2>
+			Open Door 2
+		</h2>
+	</a>
+</button>
+<button id="c" class="link-card" >
+	<a>
+		<h2>
+			Close Door 1 
+		</h2>
+	</a>
+</button>
+<button id="d" class="link-card" >
+	<a>
+		<h2>
+			Close Door 2
+		</h2>
+	</a>
+</button>
+<button id="e" class="link-card" >
+	<a>
+		<h2>
+			Content
+		</h2>
+	</a>
+</button>
+
 <style>
 	.link-card {
 		list-style: none;
@@ -59,3 +86,73 @@ const { href, title, body } = Astro.props;
 		color: rgb(var(--accent-light));
 	}
 </style>
+
+<script>
+	
+async function postQuery(id: number, num1: number, num2: number) {
+	let request = new XMLHttpRequest();
+	request.open("POST", "http://127.0.0.1:80/door-change");
+	request.setRequestHeader("Content-Type", "application/json");
+	//"Access-Control-Allow-Origin"
+	//request.setRequestHeader("Access-Control-Allow-Origin", "http://127.0.0.1:80/door-change");
+	request.setRequestHeader("Access-Control-Allow-Methods", "POST");
+	request.setRequestHeader("Access-Control-Allow-Headers", "Content-Type");
+	request.send(JSON.stringify({
+		"id": id,
+		"porta1": num1,
+		"porta2": num2
+	}));
+
+	request.onload = () => {
+		console.log(request.responseText);
+	};
+
+	request.onerror = () => {
+		console.log("error");
+	};
+
+}
+
+async function getInfo() {
+	let request = new XMLHttpRequest();
+	request.open("GET", "http://127.0.0.1:80/door");
+	request.setRequestHeader("Content-Type", "application/json");
+	request.setRequestHeader("Access-Control-Allow-Origin", "http://127.0.0.1:80");
+	//"Access-Control-Allow-Origin"
+	request.send();
+	//load the response int the conent button e
+	request.onload = () => {
+		console.log(request.responseText);
+	};
+
+	request.onerror = () => {
+		console.log("error");
+	};
+
+}
+
+const tgt = document.querySelector("#a");
+tgt.addEventListener("click", () => {
+	postQuery(1, 1, 0);
+  });
+
+const tgt2 = document.querySelector("#b");
+tgt2.addEventListener("click", () => {
+	postQuery(1, 0, 1);
+  });
+
+const tgt3 = document.querySelector("#c");
+tgt3.addEventListener("click", () => {
+	postQuery(1, 0, 0);
+  });
+
+const tgt4 = document.querySelector("#d");
+tgt4.addEventListener("click", () => {
+	postQuery(1, 0, 0);
+  });
+const tgt5 = document.querySelector("#e");
+tgt5.addEventListener("click", () => {
+	getInfo();
+  });
+
+</script>
