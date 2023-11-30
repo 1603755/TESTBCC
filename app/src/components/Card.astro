@@ -112,43 +112,63 @@ async function postQuery(id: number, num1: number, num2: number) {
 // 		console.log(error);
 // 	});
 // }
-
-	let request = new XMLHttpRequest();
-	request.open("POST", "http://127.0.0.1:80/door-change");
-	request.setRequestHeader("Content-Type", "application/json");
-	request.setRequestHeader("Access-Control-Allow-Methods", "POST");
-	request.setRequestHeader("Access-Control-Allow-Headers", "Content-Type");
-	request.send(JSON.stringify({
-		"id": id,
-		"porta1": num1,
-		"porta2": num2
-	}));
-
-	request.onload = () => {
-		console.log(request.responseText);
-	};
-
-	request.onerror = () => {
-		console.log("error");
-	};
-
+	try {
+		const response = await fetch("http://127.0.0.1:80/door-change", {
+			method: "POST",
+			headers: {
+				"Content-Type": "application/json",
+				"Access-Control-Allow-Methods": "POST",
+				"Access-Control-Allow-Headers": "Content-Type"
+			},
+			body: JSON.stringify({
+				"id": id,
+				"porta1": num1,
+				"porta2": num2
+			})
+		});
+		const data = await response.json();
+		console.log(data);
+	} catch (error) {
+		console.log(error);
+	}
 }
 
+// 	let request = new XMLHttpRequest();
+// 	request.open("POST", "http://127.0.0.1:80/door-change");
+// 	request.setRequestHeader("Content-Type", "application/json");
+// 	request.setRequestHeader("Access-Control-Allow-Methods", "POST");
+// 	request.setRequestHeader("Access-Control-Allow-Headers", "Content-Type");
+// 	request.send(JSON.stringify({
+// 		"id": id,
+// 		"porta1": num1,
+// 		"porta2": num2
+// 	}));
+
+// 	request.onload = () => {
+// 		console.log(request.responseText);
+// 	};
+
+// 	request.onerror = () => {
+// 		console.log("error");
+// 	};
+
+// }
+
 async function getInfo() {
-	await fetch("http://127.0.0.1:80/hey", {
-		method: "GET",
-		headers: {
-			"Content-Type": "application/json",
-			"Access-Control-Allow-Origin": "*"
-		},
-		mode: 'no-cors',
-	})
-	.then((response) => {
-		console.log(response);
-	})
-	.catch((error) => {
+	try {
+		const response = await fetch("http://127.0.0.1:80/door", {
+			method: "GET",
+			headers: {
+				"Access-Control-Allow-Origin": "*",
+				"Access-Control-Allow-Methods": "*",
+				"Access-Control-Allow-Headers": "Content-Type",
+			},
+		});
+		const data = await response.json();
+    	console.log(data);
+	} catch (error) {
 		console.log(error);
-	});
+	}
 }
 
 // 	let request = new XMLHttpRequest();

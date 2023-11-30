@@ -29,17 +29,16 @@ async fn main() -> std::io::Result<()> {
     HttpServer::new(|| {
 
         let cors = Cors::default()
-            .allowed_origin("*")
-            .allowed_methods(vec!["GET", "POST"])
-            //.allowed_headers(vec![http::header::AUTHORIZATION, http::header::ACCEPT])
-            .allowed_header(http::header::CONTENT_TYPE);
-
-    
+            .allow_any_origin()
+            .allow_any_method()
+            .allow_any_header()
+            .supports_credentials();
         App::new()
+            .wrap(cors)
             .service(hello)
             .service(echo)
             .service(process_request)
-            .service(web::resource("/door-change").route(web::route().guard(actix_web::guard::Options()).to(process_change_door)))
+            .service(process_change_door)
             .service(process_get_door)
             .route("/hey", web::get().to(manual_hello))
     })

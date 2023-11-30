@@ -51,6 +51,7 @@ async fn process_request(requests: web::Json<Vec<Request>>) -> Result<HttpRespon
     Ok(HttpResponse::Ok().body("OK"))
 }
 
+#[post("/door-change")]
 pub async fn process_change_door  (door: web::Json<Door>) -> Result<HttpResponse, ActixError> {
     //If the door exxists, update the door
     println!("a");
