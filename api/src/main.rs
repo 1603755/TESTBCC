@@ -1,25 +1,25 @@
 
-use actix_web::{get, post, web, App, HttpResponse, HttpServer, Responder, http};
+use actix_web::{get, post, web, App, HttpResponse, HttpServer, Responder, http, web::Redirect};
 use actix_cors::Cors;
 use api::db;
 use api::services::{
     process_request,
     process_change_door,
-    process_get_door
+    process_get_door,
+    get_rfid_table,
 };
+use std::fs;
 
-#[get("/")]
-async fn hello() -> impl Responder {
-    HttpResponse::Ok().body("Hello world!")
+async fn get_html () -> impl Responder {
+    let html = fs::read_to_string("./web/index.html").unwrap();
+    HttpResponse::Ok()
+        .content_type("text/html; charset=utf-8")
+        .body(html)
 }
 
 #[post("/echo")]
 async fn echo(req_body: String) -> impl Responder {
     HttpResponse::Ok().body(req_body)
-}
-
-async fn manual_hello() -> impl Responder {
-    HttpResponse::Ok().body("Hey there!")
 }
 
 #[actix_web::main]
@@ -35,12 +35,12 @@ async fn main() -> std::io::Result<()> {
             .supports_credentials();
         App::new()
             .wrap(cors)
-            .service(hello)
             .service(echo)
             .service(process_request)
             .service(process_change_door)
             .service(process_get_door)
-            .route("/hey", web::get().to(manual_hello))
+            .service(get_rfid_table)
+            .route("/", web::get().to(get_html))
     })
     .bind(("0.0.0.0", 80))?
     .run()

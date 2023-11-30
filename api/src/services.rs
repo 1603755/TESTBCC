@@ -1,9 +1,12 @@
 extern crate diesel;
 use serde::{Deserialize, Serialize};
 use mysql::*;
-use actix_web::{error, post, get, web, Error as ActixError, HttpResponse};
+use actix_web::{error, post, get, web, Error as ActixError, HttpResponse, Responder};
 use mysql::prelude::Queryable;
 use actix_cors::Cors;
+//import fs
+use std::fs;
+
 
 pub const PASSWORD : &str = "root_password";
 pub const USER : &str = "root";
@@ -30,6 +33,15 @@ pub struct Request {
 }
 
 #[derive(Debug, Serialize, Deserialize)]
+pub struct Rfid {
+    pub id: u32,
+    pub antennaPort: u32,
+    pub epc: String,
+    pub timestamp: String,
+
+}
+
+#[derive(Debug, Serialize, Deserialize)]
 pub struct Door {
     pub id: u32,
     pub porta1: u32,
@@ -49,6 +61,36 @@ async fn process_request(requests: web::Json<Vec<Request>>) -> Result<HttpRespon
         conn.query_drop(query).expect("Failed to insert data");
     }
     Ok(HttpResponse::Ok().body("OK"))
+}
+
+#[get("/rfid")]
+pub async fn get_rfid_table () -> Result<HttpResponse, ActixError> {
+    let conn = establish_connection();
+    if conn.is_err() {
+        return Err(error::ErrorInternalServerError("Failed to connect Database"));
+    }
+    let mut conn = conn.unwrap();
+    let query = format!("SELECT * FROM rfid_table");
+    let result = conn.query_map(query, |(id, antennaPort, epc, timestamp)| {
+        Rfid {
+            id,
+            antennaPort,
+            epc,
+            timestamp,
+        }
+    });
+
+    if result.is_err() {
+        return Err(error::ErrorInternalServerError("Failed to get data from database"));
+    }
+    let result = result.unwrap();
+    let mut response = String::from("[");
+    for rfid in result {
+        response.push_str(&format!("{{\"id\": {}, \"antennaPort\": {}, \"epc\": \"{}\", \"timestamp\": \"{}\"}},", rfid.id, rfid.antennaPort, rfid.epc, rfid.timestamp));
+    }
+    response.pop();
+    response.push_str("]");
+    Ok(HttpResponse::Ok().body(response))
 }
 
 #[post("/door-change")]
@@ -121,3 +163,4 @@ async fn process_get_door () -> Result<HttpResponse, ActixError> {
     //response.push_str("]");
     Ok(HttpResponse::Ok().body(response))
 }
+

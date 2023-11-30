@@ -1,4 +1,5 @@
 ---
+import { getDecorators } from 'typescript';
 interface Props {
 	body: string;
 	door_num: string;
@@ -26,27 +27,51 @@ const { body, door_num } = Astro.props;
 		</h2>
 	</a>
 </button>
-<button id="c" class="link-card" >
-	<a>
-		<h2>
-			Close Door 1 
-		</h2>
-	</a>
-</button>
 <button id="d" class="link-card" >
 	<a>
 		<h2>
-			Close Door 2
+			Close Doors
 		</h2>
 	</a>
 </button>
-<button id="e" class="link-card" >
+<br>
+<button id="e" class="link-card" onload="getDoor()" >
 	<a>
 		<h2>
-			Content
+			Load Door's Table
 		</h2>
 	</a>
 </button>
+<button id="f" class="link-card" >
+	<a>
+		<h2>
+			Load Rfid's Table
+		</h2>
+	</a>
+</button>
+<!-- draw a table -->
+<table >
+	<tr>
+		<th>Door</th>
+		<th>State</th>
+	</tr>
+	<tr>
+		<td>Door 1</td>
+		<td id="door-1">Close</td>
+	</tr>
+	<tr>
+		<td>Door 2</td>
+		<td id="door-2">Close</td>
+	</tr>
+</table>
+
+<table id="rfid">
+	<tr>
+		<th>Id</th>
+		<th>AntennaPort</th>
+		<th>Epc</th>
+		<th>Timestamp</th>
+	</tr>
 
 <style>
 	.link-card {
@@ -86,6 +111,29 @@ const { body, door_num } = Astro.props;
 	}
 	.link-card:is(:hover, :focus-within) h2 {
 		color: rgb(var(--accent-light));
+	}
+	td {
+		align-items: center;
+		justify-content: center;
+		text-align: center;
+	}
+	table {
+		border-collapse: collapse;
+		width: 100%;
+		border: 1px solid #ddd;
+		border-radi;
+		
+	}
+	#d {
+		width: 208%;
+		background-color: #ddd;
+	}
+	tr th {
+		background-color: #ddd;
+		color: black;
+	}
+	#rfid {
+		width: 150%;
 	}
 </style>
 
@@ -133,28 +181,8 @@ async function postQuery(id: number, num1: number, num2: number) {
 	}
 }
 
-// 	let request = new XMLHttpRequest();
-// 	request.open("POST", "http://127.0.0.1:80/door-change");
-// 	request.setRequestHeader("Content-Type", "application/json");
-// 	request.setRequestHeader("Access-Control-Allow-Methods", "POST");
-// 	request.setRequestHeader("Access-Control-Allow-Headers", "Content-Type");
-// 	request.send(JSON.stringify({
-// 		"id": id,
-// 		"porta1": num1,
-// 		"porta2": num2
-// 	}));
 
-// 	request.onload = () => {
-// 		console.log(request.responseText);
-// 	};
-
-// 	request.onerror = () => {
-// 		console.log("error");
-// 	};
-
-// }
-
-async function getInfo() {
+async function getDoor() {
 	try {
 		const response = await fetch("http://127.0.0.1:80/door", {
 			method: "GET",
@@ -166,10 +194,58 @@ async function getInfo() {
 		});
 		const data = await response.json();
     	console.log(data);
+
+		let porta1 = data.porta1;
+		let porta2 = data.porta2;
+		
+		if (porta1 == 1) {
+			document.getElementById("door-1")!.innerHTML = "Open";
+		} else {
+			document.getElementById("door-1")!.innerHTML = "Close";
+		}
+		if (porta2 == 1) {
+			document.getElementById("door-2")!.innerHTML = "Open";
+		} else {
+			document.getElementById("door-2")!.innerHTML = "Close";
+		}
+
+
 	} catch (error) {
 		console.log(error);
 	}
 }
+
+async function getRfid() {
+	try {
+		const response = await fetch("http://127.0.0.1:80/rfid", {
+			method: "GET",
+			headers: {
+				"Access-Control-Allow-Origin": "*",
+				"Access-Control-Allow-Methods": "*",
+				"Access-Control-Allow-Headers": "Content-Type",
+			},
+		});
+		const data = await response.json();
+		console.log(data);
+		//id, antennaPort, epc, timestamp
+		for (let i = 0; i < data.length; i++) {
+			let id = data[i].id;
+			let antennaPort = data[i].antennaPort;
+			let epc = data[i].epc;
+			let timestamp = data[i].timestamp;
+			//create a new row
+			let table = document.getElementById("rfid");
+			table!.innerHTML = '<tr><th>Id</th><th>AntennaPort</th><th>Epc</th><th>Timestamp</th></tr>' + "<tr><td>" + id + "</td><td>" + antennaPort + "</td><td>" + epc + "</td><td>" + timestamp + "</td></tr>";
+		}
+
+
+
+
+	} catch (error) {
+		console.log(error);
+	}
+}
+
 
 // 	let request = new XMLHttpRequest();
 // 	request.open("GET", "http://127.0.0.1:80/hey");
@@ -191,27 +267,29 @@ async function getInfo() {
 // }
 
 const tgt = document.querySelector("#a");
-tgt.addEventListener("click", () => {
+tgt!.addEventListener("click", () => {
 	postQuery(1, 1, 0);
-  });
+});
 
 const tgt2 = document.querySelector("#b");
-tgt2.addEventListener("click", () => {
+tgt2!.addEventListener("click", () => {
 	postQuery(1, 0, 1);
   });
 
-const tgt3 = document.querySelector("#c");
-tgt3.addEventListener("click", () => {
-	postQuery(1, 0, 0);
-  });
 
 const tgt4 = document.querySelector("#d");
-tgt4.addEventListener("click", () => {
+tgt4!.addEventListener("click", () => {
 	postQuery(1, 0, 0);
   });
 const tgt5 = document.querySelector("#e");
-tgt5.addEventListener("click", () => {
-	getInfo();
+tgt5!.addEventListener("click", () => {
+	getDoor();
   });
+
+const tgt6 = document.querySelector("#f");
+tgt6!.addEventListener("click", () => {
+	getRfid();
+  });
+
 
 </script>
