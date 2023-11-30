@@ -16,21 +16,21 @@ const { body, door_num } = Astro.props;
 <button id="a" class="link-card" >
 	<a href="#">
 		<h2>
-			Open Door 1
+			Abrir Puerta 1
 		</h2>
 	</a>
 </button>
 <button id="b" class="link-card" >
 	<a>
 		<h2>
-			Open Door 2
+			Abrir Puerta 2
 		</h2>
 	</a>
 </button>
 <button id="d" class="link-card" >
 	<a>
 		<h2>
-			Close Doors
+			Cerrar Puertas
 		</h2>
 	</a>
 </button>
@@ -38,30 +38,30 @@ const { body, door_num } = Astro.props;
 <button id="e" class="link-card" onload="getDoor()" >
 	<a>
 		<h2>
-			Load Door's Table
+			Cargar tabla Puertas
 		</h2>
 	</a>
 </button>
 <button id="f" class="link-card" >
 	<a>
 		<h2>
-			Load Rfid's Table
+			Cargar tabla Rfid
 		</h2>
 	</a>
 </button>
 <!-- draw a table -->
 <table >
 	<tr>
-		<th>Door</th>
-		<th>State</th>
+		<th>Puerta</th>
+		<th>Estado</th>
 	</tr>
 	<tr>
-		<td>Door 1</td>
-		<td id="door-1">Close</td>
+		<td>Puerta 1</td>
+		<td id="door-1">Cerrada</td>
 	</tr>
 	<tr>
-		<td>Door 2</td>
-		<td id="door-2">Close</td>
+		<td>Puerta 2</td> 
+		<td id="door-2">Cerrada</td>
 	</tr>
 </table>
 
@@ -72,6 +72,7 @@ const { body, door_num } = Astro.props;
 		<th>Epc</th>
 		<th>Timestamp</th>
 	</tr>
+</table>
 
 <style>
 	.link-card {
@@ -199,14 +200,14 @@ async function getDoor() {
 		let porta2 = data.porta2;
 		
 		if (porta1 == 1) {
-			document.getElementById("door-1")!.innerHTML = "Open";
+			document.getElementById("door-1")!.innerHTML = "Abierta";
 		} else {
-			document.getElementById("door-1")!.innerHTML = "Close";
+			document.getElementById("door-1")!.innerHTML = "Cerrada";
 		}
 		if (porta2 == 1) {
-			document.getElementById("door-2")!.innerHTML = "Open";
+			document.getElementById("door-2")!.innerHTML = "Abierta";
 		} else {
-			document.getElementById("door-2")!.innerHTML = "Close";
+			document.getElementById("door-2")!.innerHTML = "Cerrada";
 		}
 
 
