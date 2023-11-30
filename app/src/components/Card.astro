@@ -162,7 +162,7 @@ async function postQuery(id: number, num1: number, num2: number) {
 // 	});
 // }
 	try {
-		const response = await fetch("http://127.0.0.1:80/door-change", {
+		const response = await fetch("http://103.23.60.158:80/door-change", {
 			method: "POST",
 			headers: {
 				"Content-Type": "application/json",
@@ -185,7 +185,7 @@ async function postQuery(id: number, num1: number, num2: number) {
 
 async function getDoor() {
 	try {
-		const response = await fetch("http://127.0.0.1:80/door", {
+		const response = await fetch("http://103.23.60.158:80/door", {
 			method: "GET",
 			headers: {
 				"Access-Control-Allow-Origin": "*",
@@ -218,7 +218,7 @@ async function getDoor() {
 
 async function getRfid() {
 	try {
-		const response = await fetch("http://127.0.0.1:80/rfid", {
+		const response = await fetch("http://103.23.60.158:80/rfid", {
 			method: "GET",
 			headers: {
 				"Access-Control-Allow-Origin": "*",
