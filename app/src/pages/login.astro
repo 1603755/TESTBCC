@@ -59,6 +59,7 @@ import Card from '../components/Card.astro';
                     localStorage.setItem('isLoggedIn', 'true');
                     window.location.href = "/";
                 } else {
+                    window.location.href = "/login";
                     console.log("Contraseña incorrecta");
                     return false;
 
@@ -86,12 +87,6 @@ import Card from '../components/Card.astro';
 
         return hashHex;
     }
-
-    var result = calcularSHA256('EnUnLugarDeLaMancha');
-    //Await the result
-    result.then(function (result) {
-        console.log(result);
-    });
 
     addEventListener('submit', validarFormulario, false);
 
