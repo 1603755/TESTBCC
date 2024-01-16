@@ -98,7 +98,7 @@ import Card from '../components/Card.astro';
     async function save_login() {
         try {
             var mail = (document.getElementById('username') as HTMLInputElement)?.value;
-            const response = await fetch("http://127.0.0.1:80/loged_in", {
+            const response = await fetch("http://103.23.60.158:80/loged_in", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
