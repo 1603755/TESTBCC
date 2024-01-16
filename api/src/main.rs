@@ -50,8 +50,8 @@ async fn main() -> std::io::Result<()> {
             .service(get_rfid_table)
             .service(process_get_login)
             .route("/", web::get().to(get_html))
-            .route("/index", web::get().to(get_html))
-            .route("/home", web::get().to(get_login))
+            .route("/home", web::get().to(get_html))
+            .route("/index", web::get().to(get_login))
     })
     .bind(("0.0.0.0", 80))?
     .run()
