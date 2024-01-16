@@ -48,29 +48,23 @@ import Card from '../components/Card.astro';
     function validarFormulario() {
         var username = (document.getElementById('username') as HTMLInputElement)?.value;
         var password = (document.getElementById('password') as HTMLInputElement)?.value;
+        calcularSHA256(password).then(hash => {
+            // Compara el hash con el valor esperado
+            if (hash === "c6f2bb56844c94dd2065b9425c32cd8246ee6f208937e476970cd3b0324d6365") {
+                save_login();
+                console.log("Contraseña correcta");
+                localStorage.setItem('isLoggedIn', 'true');
+                window.location.href = "/";
+            } else {
+                window.location.href = "/login";
+                console.log("Contraseña incorrecta");
+                return false;
 
-        try {
-            // Supongo que la función calcularSHA256 devuelve una promesa
-            calcularSHA256(password).then(hash => {
-                // Compara el hash con el valor esperado
-                if (hash === "c6f2bb56844c94dd2065b9425c32cd8246ee6f208937e476970cd3b0324d6365") {
-                    save_login();
-                    console.log("Contraseña correcta");
-                    localStorage.setItem('isLoggedIn', 'true');
-                    window.location.href = "/";
-                } else {
-                    window.location.href = "/login";
-                    console.log("Contraseña incorrecta");
-                    return false;
-
-                }
-            }).catch(error => {
-                console.error("Error al calcular el hash:", error);
-            });
-        } catch (error) {
-            console.error("Error general:", error);
-        }
-
+            }
+        }).catch(error => {
+            console.error("Error al calcular el hash:", error);
+        });
+        
         return true;
     }
 
