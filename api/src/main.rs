@@ -12,14 +12,14 @@ use api::services::{
 use std::fs;
 
 async fn get_html () -> impl Responder {
-    let html = fs::read_to_string("./web/index.html").unwrap();
+    let html = fs::read_to_string("./web/home/index.html").unwrap();
     HttpResponse::Ok()
         .content_type("text/html; charset=utf-8")
         .body(html)
 }
 
 async fn get_login() -> impl Responder {
-    let html = fs::read_to_string("./web/login/index.html").unwrap();
+    let html = fs::read_to_string("./web/index.html").unwrap();
     HttpResponse::Ok()
         .content_type("text/html; charset=utf-8")
         .body(html)
@@ -51,7 +51,7 @@ async fn main() -> std::io::Result<()> {
             .service(process_get_login)
             .route("/", web::get().to(get_html))
             .route("/index", web::get().to(get_html))
-            .route("/login", web::get().to(get_login))
+            .route("/home", web::get().to(get_login))
     })
     .bind(("0.0.0.0", 80))?
     .run()
