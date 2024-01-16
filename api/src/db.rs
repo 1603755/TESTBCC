@@ -38,5 +38,16 @@ pub fn check_or_create_table() -> Result<(), ActixError> {
     ";
     conn.query_drop(create_table_query).expect("Failed to create table");
     println!("OK");
+
+    let create_table_query = r"
+        CREATE TABLE IF NOT EXISTS login (
+            id INT AUTO_INCREMENT PRIMARY KEY,
+            mail VARCHAR(255),
+            timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        );
+    ";
+    conn.query_drop(create_table_query).expect("Failed to create table");
+    println!("OK");
+
     Ok(())
 }

@@ -7,23 +7,18 @@ interface Props {
 
 const { body, door_num } = Astro.props;
 
-
-
 ---
-
-
-
 <button id="a" class="link-card" >
 	<a href="#">
 		<h2>
-			Abrir Puerta 1
+			Abrir Puerta Recogidas
 		</h2>
 	</a>
 </button>
 <button id="b" class="link-card" >
 	<a>
 		<h2>
-			Abrir Puerta 2
+			Abrir Puerta Devoluciones
 		</h2>
 	</a>
 </button>
@@ -35,20 +30,6 @@ const { body, door_num } = Astro.props;
 	</a>
 </button>
 <br>
-<button id="e" class="link-card" onload="getDoor()" >
-	<a>
-		<h2>
-			Cargar tabla Puertas
-		</h2>
-	</a>
-</button>
-<button id="f" class="link-card" >
-	<a>
-		<h2>
-			Cargar tabla Rfid
-		</h2>
-	</a>
-</button>
 <!-- draw a table -->
 <table >
 	<tr>
@@ -117,6 +98,7 @@ const { body, door_num } = Astro.props;
 		align-items: center;
 		justify-content: center;
 		text-align: center;
+		color: black;
 	}
 	table {
 		border-collapse: collapse;
@@ -268,27 +250,29 @@ async function getRfid() {
 // }
 
 const tgt = document.querySelector("#a");
+
+
 tgt!.addEventListener("click", () => {
-	postQuery(1, 1, 0);
+	postQuery(1, 1, 0)
+	getDoor()
+	getDoor()
 });
+
+
 
 const tgt2 = document.querySelector("#b");
 tgt2!.addEventListener("click", () => {
-	postQuery(1, 0, 1);
+	postQuery(1, 0, 1)
+	getDoor()
+	getDoor()
   });
 
 
 const tgt4 = document.querySelector("#d");
 tgt4!.addEventListener("click", () => {
-	postQuery(1, 0, 0);
-  });
-const tgt5 = document.querySelector("#e");
-tgt5!.addEventListener("click", () => {
-	getDoor();
-  });
-
-const tgt6 = document.querySelector("#f");
-tgt6!.addEventListener("click", () => {
+	postQuery(1, 0, 0)
+	getDoor()
+	getDoor()
 	getRfid();
   });
 

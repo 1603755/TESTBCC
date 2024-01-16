@@ -7,11 +7,19 @@ use api::services::{
     process_change_door,
     process_get_door,
     get_rfid_table,
+    process_get_login
 };
 use std::fs;
 
 async fn get_html () -> impl Responder {
     let html = fs::read_to_string("./web/index.html").unwrap();
+    HttpResponse::Ok()
+        .content_type("text/html; charset=utf-8")
+        .body(html)
+}
+
+async fn get_login() -> impl Responder {
+    let html = fs::read_to_string("./web/login/index.html").unwrap();
     HttpResponse::Ok()
         .content_type("text/html; charset=utf-8")
         .body(html)
@@ -40,7 +48,9 @@ async fn main() -> std::io::Result<()> {
             .service(process_change_door)
             .service(process_get_door)
             .service(get_rfid_table)
+            .service(process_get_login)
             .route("/", web::get().to(get_html))
+            .route("/login", web::get().to(get_login))
     })
     .bind(("0.0.0.0", 80))?
     .run()

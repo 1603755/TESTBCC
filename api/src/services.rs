@@ -33,6 +33,11 @@ pub struct Request {
 }
 
 #[derive(Debug, Serialize, Deserialize)]
+pub struct Login {
+    pub mail: String,
+}
+
+#[derive(Debug, Serialize, Deserialize)]
 pub struct Rfid {
     pub id: u32,
     pub antennaPort: u32,
@@ -96,9 +101,7 @@ pub async fn get_rfid_table () -> Result<HttpResponse, ActixError> {
 #[post("/door-change")]
 pub async fn process_change_door  (door: web::Json<Door>) -> Result<HttpResponse, ActixError> {
     //If the door exxists, update the door
-    println!("a");
     let conn = establish_connection();
-    println!("b");
     if conn.is_err() {
         return Err(error::ErrorInternalServerError("Failed to connect Database"));
     }
@@ -111,7 +114,6 @@ pub async fn process_change_door  (door: web::Json<Door>) -> Result<HttpResponse
             porta2,
         }
     });
-    println!("c");
     if result.is_err() {
         return Err(error::ErrorInternalServerError("Failed to get data from database"));
     }
@@ -129,7 +131,6 @@ pub async fn process_change_door  (door: web::Json<Door>) -> Result<HttpResponse
         }
         
     } else {
-        println!("e");
         let query = format!("INSERT INTO mydatabase.door_registry (id, porta1, porta2) VALUES ({}, {}, {})", door.id, door.porta1, door.porta2);
         conn.query_drop(query).expect("Failed to insert data");
     }
@@ -164,3 +165,21 @@ async fn process_get_door () -> Result<HttpResponse, ActixError> {
     Ok(HttpResponse::Ok().body(response))
 }
 
+#[post("/loged_in")]
+async fn process_get_login(requests: web::Json<Login>) -> Result<HttpResponse, ActixError> {
+    println!("Login: {}", requests.mail);
+    let conn = establish_connection();
+    if conn.is_err() {
+        return Err(error::ErrorInternalServerError("Failed to connect Database"));
+    }
+    let mut conn = conn.unwrap();
+    //Append the new login 
+    let query = format!("INSERT INTO login (mail) VALUES ('{}')", requests.mail);
+    conn.query_drop(query).expect("Failed to insert data");
+    let mut response = String::new(); // String::from("[");
+    response.push_str(&format!("{{\"mail\": \"{}\"}}", requests.mail));
+    //response.push_str("]");
+    println!("Response: {}", response);
+    Ok(HttpResponse::Ok().body(response))
+}
+    

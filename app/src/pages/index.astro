@@ -4,17 +4,8 @@ import Card from '../components/Card.astro';
 
 ---
 
-<Layout title="Welcome to TESTBCC.">
+<Layout title="Prueba piloto GZW">
 	<main>
-		<svg
-			class="astro-a"
-			width="495"
-			height="623"
-			viewBox="0 0 495 623"
-			fill="none"
-			xmlns="http://www.w3.org/2000/svg"
-			aria-hidden="true"
-		>
 			<path
 				fill-rule="evenodd"
 				clip-rule="evenodd"
@@ -34,10 +25,7 @@ import Card from '../components/Card.astro';
 				</linearGradient>
 			</defs>
 		</svg>
-		<h1>Bienvenido a <span class="text-gradient">TESTBCC</span></h1>
-		<p class="instructions">
-			Recuerda hacer click en el botón de carga cuando se presione el botón de abrir/cerrar puerta, código detallado en <code>components/Card.astro</code>
-		</p>
+		<h1>Prueba piloto <span class="verde">PAASSIOT</span> <span class="azul">Go Zero Waste</span></h1>
 		<ul role="list" class="link-card-grid">
 			<Card
 				body="Change Door 1"
@@ -72,6 +60,7 @@ import Card from '../components/Card.astro';
 		line-height: 1;
 		text-align: center;
 		margin-bottom: 1em;
+		color: black;
 	}
 	.text-gradient {
 		background-image: var(--accent-gradient);
@@ -80,28 +69,24 @@ import Card from '../components/Card.astro';
 		background-size: 400%;
 		background-position: 0%;
 	}
-	.instructions {
-		margin-bottom: 2rem;
-		border: 1px solid rgba(var(--accent-light), 25%);
-		background: linear-gradient(rgba(var(--accent-dark), 66%), rgba(var(--accent-dark), 33%));
-		padding: 1.5rem;
-		border-radius: 8px;
-	}
-	.instructions code {
-		font-size: 0.8em;
-		font-weight: bold;
-		background: rgba(var(--accent-light), 12%);
-		color: rgb(var(--accent-light));
-		border-radius: 4px;
-		padding: 0.3em 0.4em;
-	}
-	.instructions strong {
-		color: rgb(var(--accent-light));
-	}
 	.link-card-grid {
 		display: grid;
 		grid-template-columns: repeat(auto-fit, minmax(24ch, 1fr));
 		gap: 2rem;
 		padding: 0;
 	}
+
+	.azul {
+		color: #349cc9;
+	}
+
+	.verde {
+		color: #34c98d;
+	}
 </style>
+<script> 
+	const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
+	if (!isLoggedIn) {
+		window.location.href = '/login';
+	}
+</script>
