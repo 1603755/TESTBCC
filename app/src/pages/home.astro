@@ -85,7 +85,7 @@ import Card from '../components/Card.astro';
 	}
 </style>
 <script> 
-	const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
+	const isLoggedIn = localStorage.getItem('isLoggedIn') === 'false';
 	if (!isLoggedIn) {
 		window.location.href = 'http://103.23.60.158:80/index';
 	}
