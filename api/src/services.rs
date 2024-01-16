@@ -35,6 +35,8 @@ pub struct Request {
 #[derive(Debug, Serialize, Deserialize)]
 pub struct Login {
     pub mail: String,
+    pub password: String,
+
 }
 
 #[derive(Debug, Serialize, Deserialize)]
@@ -165,7 +167,7 @@ async fn process_get_door () -> Result<HttpResponse, ActixError> {
     Ok(HttpResponse::Ok().body(response))
 }
 
-#[post("/loged_in")]
+#[post("/login")]
 async fn process_get_login(requests: web::Json<Login>) -> Result<HttpResponse, ActixError> {
     println!("Login: {}", requests.mail);
     let conn = establish_connection();
@@ -180,6 +182,11 @@ async fn process_get_login(requests: web::Json<Login>) -> Result<HttpResponse, A
     response.push_str(&format!("{{\"mail\": \"{}\"}}", requests.mail));
     //response.push_str("]");
     println!("Response: {}", response);
-    Ok(HttpResponse::Ok().body(response))
+
+    let html = fs::read_to_string("./web/home/index.html").unwrap();
+    
+    Ok(HttpResponse::Ok()
+    .content_type("text/html; charset=utf-8")
+    .body(html))
 }
     

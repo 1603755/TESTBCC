@@ -5,13 +5,13 @@ import Card from '../components/Card.astro';
 
 <Layout title="Welcome to TESTBCC.">
     <form class="login-form" method="post" id="myForm">
-        <label for="username">Mail:</label>
-        <input type="text" id="username" name="username" required>
+        <label for="mail">Mail:</label>
+        <input type="text" id="username" name="mail" required>
 
         <label for="password">Password:</label>
         <input type="password" id="password" name="password" required>
 
-        <button type="submit">Login</button>
+        <button id="myButton" type="submit">Login</button>
     </form>
 </Layout>
 
@@ -44,8 +44,16 @@ import Card from '../components/Card.astro';
 
 
 <script>
-
+    document.getElementById("myButton")!.addEventListener("onclick", validarFormulario);
+    document.getElementById("myForm")!.addEventListener("submit", 
+        function(event) {
+            event.preventDefault();
+            validarFormulario(event);
+        }
+    );
     function validarFormulario(event: Event) {
+        event.preventDefault();
+        console.log("Validando formulario");
         var username = (document.getElementById('username') as HTMLInputElement)?.value || "";
         var password = (document.getElementById('password') as HTMLInputElement)?.value || "";
         calcularSHA256(password).then(hash => {
@@ -54,9 +62,9 @@ import Card from '../components/Card.astro';
                 save_login();
                 console.log("Contraseña correcta");
                 localStorage.setItem('isLoggedIn', 'true');
-                window.location.href = "http://103.23.60.158:80/home";
+                window.location.href = "http://127.0.1:80/home";
             } else {
-                window.location.href = "http://103.23.60.158:80/index";
+                window.location.href = "http://127.0.1:80/index";
                 console.log("Contraseña incorrecta");
             }
         }).catch(error => {
@@ -76,7 +84,7 @@ import Card from '../components/Card.astro';
     async function save_login() {
         try {
             var mail = (document.getElementById('username') as HTMLInputElement)?.value;
-            const response = await fetch("http://103.23.60.158:80/loged_in", {
+            const response = await fetch("http://127.0.0.1:80/login", { //103.23.60.158
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
@@ -93,8 +101,6 @@ import Card from '../components/Card.astro';
             console.log(error);
         }
     }
-    const form = document.getElementById('myForm')!;
-    form.addEventListener('submit', validarFormulario);
 
     const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
 	if (isLoggedIn) {
