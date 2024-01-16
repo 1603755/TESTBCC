@@ -67,19 +67,12 @@ import Card from '../components/Card.astro';
         
         return true;
     }
+    
+    import sha256 from 'crypto-js/sha256';
 
     async function calcularSHA256(texto: string) {
-        // Convierte el texto en una serie de bytes
-        const buffer = new TextEncoder().encode(texto);
-
-        // Calcula el hash SHA-256
-        const hashBuffer = await crypto.subtle.digest('SHA-256', buffer);
-
-        // Convierte el resultado del hash a una cadena hexadecimal
-        const hashArray = Array.from(new Uint8Array(hashBuffer));
-        const hashHex = hashArray.map(byte => byte.toString(16).padStart(2, '0')).join('');
-
-        return hashHex;
+        const hash = sha256(texto);
+        return hash.toString();
     }
 
     async function save_login() {
