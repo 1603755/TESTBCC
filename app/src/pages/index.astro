@@ -4,7 +4,7 @@ import Card from '../components/Card.astro';
 ---
 
 <Layout title="Welcome to TESTBCC.">
-    <form class="login-form" method="post">
+    <form class="login-form" method="post" id="myForm">
         <label for="username">Mail:</label>
         <input type="text" id="username" name="username" required>
 
@@ -45,7 +45,7 @@ import Card from '../components/Card.astro';
 
 <script>
 
-    function validarFormulario() {
+    function validarFormulario(event: Event) {
         var username = (document.getElementById('username') as HTMLInputElement)?.value || "";
         var password = (document.getElementById('password') as HTMLInputElement)?.value || "";
         calcularSHA256(password).then(hash => {
@@ -58,8 +58,6 @@ import Card from '../components/Card.astro';
             } else {
                 window.location.href = "http://103.23.60.158:80/index";
                 console.log("Contraseña incorrecta");
-                return false;
-
             }
         }).catch(error => {
             console.error("Error al calcular el hash:", error);
@@ -95,8 +93,8 @@ import Card from '../components/Card.astro';
             console.log(error);
         }
     }
-
-    addEventListener('submit', validarFormulario, false);
+    const form = document.getElementById('myForm')!;
+    form.addEventListener('submit', validarFormulario);
 
     const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
 	if (isLoggedIn) {
