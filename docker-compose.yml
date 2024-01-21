@@ -1,18 +1,19 @@
-version: '3'
-
+# RUN WITH: docker-compose build --progress plain --no-cache
+version: '1'
 services:
-  rust_app:
+  app:
     image: rust:latest
-    working_dir: /app
+    build: 
+      context: .
+      dockerfile: ./api/Dockerfile
     volumes:
-      - ./api:/app
-    command: cargo run
+      - ../TESTBCC:/TESTBCC
     ports:
       - "80:80"
     depends_on:
-      - mysql_db
+      - db
 
-  mysql_db:
+  db:
     image: mysql:latest
     environment:
       MYSQL_ROOT_PASSWORD: root_password
@@ -25,3 +26,43 @@ services:
 
 
 
+
+
+# version: '1'
+# services:
+
+#   dragonfly-db:
+#     image: docker.dragonflydb.io/dragonflydb/dragonfly:latest
+#     ports:
+#       - "6379:6379"
+#     networks:
+#       - redis-network
+
+#   rust-server:
+#     build:
+#       context: ./core
+#     ports:
+#       - "5000:5000"
+#     depends_on:
+#       - dragonfly-db
+#     networks:
+#       - redis-network
+    
+#   ws:
+#     build:
+#       context: .
+#       dockerfile: ./ws/Dockerfile
+#     ports:
+#       - "10000:10000"
+#     depends_on:
+#       - dragonfly-db
+#     networks:
+#       - redis-network
+#     deploy:
+#       resources:
+#         limits:
+#           cpus: '0.5'
+#           memory: 512M
+
+# networks:
+#   redis-network:

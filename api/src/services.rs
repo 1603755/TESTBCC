@@ -12,7 +12,7 @@ pub const PASSWORD : &str = "root_password";
 pub const USER : &str = "root";
 
 pub fn establish_connection() -> Result<PooledConn, ActixError> {
-    let database_url = format!("mysql://{}:{}@mysql_db:3306/mydatabase", USER, PASSWORD);
+    let database_url = format!("mysql://{}:{}@db:3306/mydatabase", USER, PASSWORD);
     let pool = Pool::new(database_url.as_str());
     if pool.is_err() {
         return Err(error::ErrorInternalServerError("Failed to create pool"));

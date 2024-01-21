@@ -1,33 +1,42 @@
-# Use the official Rust image as a build environment
-FROM rust:latest as builder
+# Build the frontend
+FROM node:20-slim AS base
+ENV PNPM_HOME="/pnpm"
+ENV PATH="$PNPM_HOME:$PATH"
+RUN corepack enable
+COPY . TESTBCC
+WORKDIR /TESTBCC/app
 
-# Set the working directory
-WORKDIR /usr/src/src
+ARG PNPM_CACHE_DIR=/pnpm/store
 
-# Copy the dependency manifest
-COPY . .
+# Install pnpm
+FROM base AS prod-deps
+RUN pnpm install --prod --frozen-lockfile
 
-
-RUN curl -fsSL https://get.pnpm.io/install.sh | sh -
-
+# Build the project
+FROM base AS pnpm-builder
+RUN pnpm install --frozen-lockfile
 RUN pnpm run build
 
-COPY ./app/dist/* ./api/web/.
-# Build the dependencies (but do not include binaries)
+# Copy the compiled frontend to a new image
+WORKDIR /TESTBCC
+RUN mkdir api/web
+RUN mv app/dist/* api/web/.
+
+# Build the Rust API
+FROM rust:latest as rust-builder
+WORKDIR /
+RUN rm -rf /api
+RUN mkdir api
+COPY --from=pnpm-builder /TESTBCC/api /api
+WORKDIR /api
 RUN cargo build --release
+RUN echo $(ls -1 .)
+RUN echo $(ls -1 ..)
+RUN echo $(pwd)
 
-# Copy the source code
-COPY . .
-
-# Use a smaller base image for the final build docker pull ustcmirror/freebsd-ports
-FROM ubuntu:latest
-# ustcmirror/freebsd-ports:latest
-# Build the application with all required dependencies
-RUN apt-get update && apt-get install -y libssl-dev  && apt-get install -y openssl
-# Set the working directory
-WORKDIR /usr/src/src
-# Copy the compiled binary from the previous build
-COPY --from=builder /usr/src/natura/core/target/release/natura .
-EXPOSE 80
-# Run the Rust application
-CMD ["./src"]
+# Copy the compiled API to a new image
+FROM rust:latest
+RUN echo $(ls -1 /api/target/release/api)
+RUN echo $(ls -1 /api/target/release)
+COPY --from=rust-builder /api/target/release/api /api
+CMD ["./api"]

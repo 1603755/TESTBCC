@@ -4,15 +4,17 @@ import Card from '../components/Card.astro';
 ---
 
 <Layout title="Welcome to TESTBCC.">
-    <form class="login-form" method="post" id="myForm">
+    <div class="login-form">
+        <h1>Introduce los credenciales</h1>
         <label for="mail">Mail:</label>
         <input type="text" id="username" name="mail" required>
 
         <label for="password">Password:</label>
         <input type="password" id="password" name="password" required>
 
-        <button id="myButton" type="submit">Login</button>
-    </form>
+        <button id="myButton">Login</button>
+    </div>
+    
 </Layout>
 
 <style>
@@ -44,21 +46,15 @@ import Card from '../components/Card.astro';
 
 
 <script>
-    document.getElementById("myButton")!.addEventListener("onclick", validarFormulario);
-    document.getElementById("myForm")!.addEventListener("submit", 
-        function(event) {
-            event.preventDefault();
-            validarFormulario(event);
-        }
-    );
-    function validarFormulario(event: Event) {
-        event.preventDefault();
+    const button = document.querySelector('button')!;
+    button.addEventListener('click', () => validarFormulario());
+    function validarFormulario() {
         console.log("Validando formulario");
         var username = (document.getElementById('username') as HTMLInputElement)?.value || "";
         var password = (document.getElementById('password') as HTMLInputElement)?.value || "";
         calcularSHA256(password).then(hash => {
             // Compara el hash con el valor esperado
-            if (hash === "c6f2bb56844c94dd2065b9425c32cd8246ee6f208937e476970cd3b0324d6365") {
+            if (hash === "03ac674216f3e15c761ee1a5e255f067953623c8b388b4459e13f978d7c846f4") {
                 save_login();
                 console.log("Contraseña correcta");
                 localStorage.setItem('isLoggedIn', 'true');
@@ -104,7 +100,7 @@ import Card from '../components/Card.astro';
 
     const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
 	if (isLoggedIn) {
-		window.location.href = 'http://103.23.60.158:80/home';
+		window.location.href = 'http://127.0.0.1:80/home';
 	}
 
 </script>
