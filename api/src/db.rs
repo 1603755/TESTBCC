@@ -1,6 +1,5 @@
 // src/db.rs
 use diesel::prelude::*;
-use crate::establish_connection;
 use std::ops::Deref;
 use mysql::*;
 use mysql::prelude::{*, Queryable};
@@ -8,6 +7,30 @@ use mysql::prelude::*;
 use mysql::{Conn, OptsBuilder};
 use actix_web::Error as ActixError;
 use actix_web::error;
+
+pub const USER : &str = "root";
+pub const PASSWORD : &str = "root_password";
+pub const DATABASE : &str = "mydatabase";
+pub const HOST : &str = "db";
+pub const PORT : &str = "3306";
+
+pub fn establish_connection() -> Result<PooledConn, ActixError> {
+    let database_url = format!("mysql://{USER}:{PASSWORD}@{HOST}:{PORT}/{DATABASE}");
+    println!("Connecting to {}", database_url);
+    let pool = Pool::new(database_url.as_str());
+    if pool.is_err() {
+        print!("pool error1: {:?}", pool.err());
+        return Err(error::ErrorInternalServerError("Failed to create pool"));
+    }
+    let pool = pool.unwrap();
+    let result = pool.get_conn();
+    if result.is_err() {
+        print!("pool error2: {:?}", result.err());
+        return Err(error::ErrorInternalServerError("Failed to get connection from pool"));
+    }
+    let conn = result.unwrap();
+    Ok(conn)
+}
 
 pub fn check_or_create_table() -> Result<(), ActixError> {
     let conn = establish_connection();

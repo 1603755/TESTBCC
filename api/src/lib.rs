@@ -2,8 +2,8 @@ pub mod db;
 pub mod services;
 
 use crate::{
-    db::check_or_create_table,
+    db::{check_or_create_table, establish_connection},
     services::{
-        establish_connection, process_request, process_change_door, process_get_door, get_rfid_table, process_get_login
+        process_request, process_change_door, process_get_door, get_rfid_table, process_get_login
     }
 };

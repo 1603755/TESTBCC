@@ -1,33 +1,13 @@
 extern crate diesel;
 use serde::{Deserialize, Serialize};
 use mysql::*;
+use crate::establish_connection;
 use actix_web::{error, post, get, web, Error as ActixError, HttpResponse, Responder};
 use mysql::prelude::*;
 use actix_cors::Cors;
 //import fs
 use std::fs;
 
-
-pub const PASSWORD : &str = "root_password";
-pub const USER : &str = "root";
-pub const DATABASE : &str = "mydatabase";
-pub const HOST : &str = "db";
-pub const PORT : &str = "3306";
-
-pub fn establish_connection() -> Result<PooledConn, ActixError> {
-    let database_url = format!("mysql://{}:{}@{}:{}/{}", USER, PASSWORD, HOST, PORT, DATABASE);
-    let pool = Pool::new(database_url.as_str());
-    if pool.is_err() {
-        return Err(error::ErrorInternalServerError("Failed to create pool"));
-    }
-    let pool = pool.unwrap();
-    let result = pool.get_conn();
-    if result.is_err() {
-        return Err(error::ErrorInternalServerError("Failed to get connection from pool"));
-    }
-    let conn = result.unwrap();
-    Ok(conn)
-}
 
 #[derive(Debug, Serialize, Deserialize)]
 pub struct Request {
