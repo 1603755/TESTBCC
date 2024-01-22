@@ -11,7 +11,7 @@ use actix_web::error;
 pub const USER : &str = "root";
 pub const PASSWORD : &str = "root_password";
 pub const DATABASE : &str = "mydatabase";
-pub const HOST : &str = "db";
+pub const HOST : &str = "103.23.60.158";
 pub const PORT : &str = "3306";
 
 pub fn establish_connection() -> Result<PooledConn, ActixError> {
