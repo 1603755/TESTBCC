@@ -1,21 +1,8 @@
 # RUN WITH: docker-compose build --progress plain --no-cache
-version: '1'
-services:
-  app:
-    image: rust:latest
-    build: 
-      context: .
-      dockerfile: ./api/Dockerfile
-    environment:
-      - DOCKER_BUILDKIT=0 
-    volumes:
-      - ../TESTBCC:/TESTBCC
-    ports:
-      - "80:80"
-    depends_on:
-      - db
 
-  db:
+services:
+
+  mysql_db:
     image: mysql:latest
     environment:
       MYSQL_ROOT_PASSWORD: root_password
@@ -24,6 +11,46 @@ services:
       MYSQL_PASSWORD: password
     ports:
       - "3306:3306"
+    
+  rust_app:
+    depends_on:
+      - mysql_db
+    image: rust:latest
+    working_dir: /app
+    volumes:
+      - ./api:/app
+    command: cargo run
+    ports:
+      - "80:80"
+   
+  
+
+# version: '1'
+# services:
+#   app:
+#     depends_on:
+#       - mysql_db
+#     image: rust:latest
+#     build: 
+#       context: .
+#       dockerfile: ./api/Dockerfile
+#     environment:
+#       - DOCKER_BUILDKIT=0 
+#     volumes:
+#       - ../TESTBCC:/TESTBCC
+#     ports:
+#       - "80:80"
+ 
+
+#   mysql_db:
+#     image: mysql:latest
+#     environment:
+#       MYSQL_ROOT_PASSWORD: root_password
+#       MYSQL_DATABASE: mydatabase
+#       MYSQL_USER: user
+#       MYSQL_PASSWORD: password
+#     ports:
+#       - "3306:3306"
   
 
 

@@ -22,14 +22,39 @@ pub struct Login {
 
 }
 
+
 #[derive(Debug, Serialize, Deserialize)]
 pub struct Rfid {
     pub id: u32,
     pub antennaPort: u32,
     pub epc: String,
     pub timestamp: String,
-
 }
+
+
+#[derive(Debug, Serialize, Deserialize)]
+pub struct Cafe {
+    pub hex: String,
+    pub timestamp: String,
+}
+
+
+#[post("/cafe")]
+async fn process_cafe(requests: web::Json<Cafe>) -> Result<HttpResponse, ActixError> {
+    println!("Cafe: {}", requests.hex);
+    let conn = establish_connection();
+    if conn.is_err() {
+        return Err(error::ErrorInternalServerError("Failed to connect Database"));
+    }
+    let request = requests.into_inner();
+    let mut conn = conn.unwrap();
+    let hex_string: String = request.hex;
+    let query = format!("INSERT INTO logs_cafe (registry) VALUES ('{}')", hex_string); 
+    conn.query_drop(query).expect("Failed to insert data");
+
+    Ok(HttpResponse::Ok().body("OK"))
+}
+
 
 #[derive(Debug, Serialize, Deserialize)]
 pub struct Door {

@@ -8,20 +8,21 @@ interface Props {
 const { body, door_num } = Astro.props;
 
 ---
-<button id="a" class="link-card" >
+<!-- <button id="a" class="link-card" >
 	<a href="#">
 		<h2>
 			Abrir Puerta Recogidas
 		</h2>
 	</a>
-</button>
-<button id="b" class="link-card" >
+</button> -->
+<button id="a" class="link-card" >
 	<a>
 		<h2>
 			Abrir Puerta Devoluciones
 		</h2>
 	</a>
 </button>
+<br>
 <button id="d" class="link-card" >
 	<a>
 		<h2>
@@ -37,22 +38,13 @@ const { body, door_num } = Astro.props;
 		<th>Estado</th>
 	</tr>
 	<tr>
-		<td>Puerta 1</td>
+		<td>Devoluciones</td>
 		<td id="door-1">Cerrada</td>
 	</tr>
-	<tr>
+	<!-- <tr>
 		<td>Puerta 2</td> 
 		<td id="door-2">Cerrada</td>
-	</tr>
-</table>
-
-<table id="rfid">
-	<tr>
-		<th>Id</th>
-		<th>AntennaPort</th>
-		<th>Epc</th>
-		<th>Timestamp</th>
-	</tr>
+	</tr> -->
 </table>
 
 <style>
@@ -102,7 +94,7 @@ const { body, door_num } = Astro.props;
 	}
 	table {
 		border-collapse: collapse;
-		width: 100%;
+		width: 208%;
 		border: 1px solid #ddd;
 		border-radi;
 		
@@ -111,6 +103,10 @@ const { body, door_num } = Astro.props;
 		width: 208%;
 		background-color: #ddd;
 	}
+	#a {
+		width: 208%;
+	}
+
 	tr th {
 		background-color: #ddd;
 		color: black;
@@ -123,28 +119,8 @@ const { body, door_num } = Astro.props;
 <script>
 	
 async function postQuery(id: number, num1: number, num2: number) {
-// 	await fetch("http://103.23.60.158:80 ", {
-// 		method: "POST",
-// 		headers: {
-// 			"Content-Type": "application/json",
-// 			"Access-Control-Allow-Methods": "POST",
-// 			"Access-Control-Allow-Headers": "Content-Type"
-// 		},
-// 		body: JSON.stringify({
-// 			"id": id,
-// 			"porta1": num1,
-// 			"porta2": num2
-// 		})
-// 	})
-// 	.then((response) => {
-// 		console.log(response);
-// 	})
-// 	.catch((error) => {
-// 		console.log(error);
-// 	});
-// }
 	try {
-		const response = await fetch("http://103.23.60.158:80/door-change", {
+		const response = await fetch("http://200.234.230.98:80/door-change", {
 			method: "POST",
 			headers: {
 				"Content-Type": "application/json",
@@ -167,7 +143,7 @@ async function postQuery(id: number, num1: number, num2: number) {
 
 async function getDoor() {
 	try {
-		const response = await fetch("http://103.23.60.158:80/door", {
+		const response = await fetch("http://200.234.230.98:80/door", {
 			method: "GET",
 			headers: {
 				"Access-Control-Allow-Origin": "*",
@@ -198,36 +174,36 @@ async function getDoor() {
 	}
 }
 
-async function getRfid() {
-	try {
-		const response = await fetch("http://103.23.60.158:80/rfid", {
-			method: "GET",
-			headers: {
-				"Access-Control-Allow-Origin": "*",
-				"Access-Control-Allow-Methods": "*",
-				"Access-Control-Allow-Headers": "Content-Type",
-			},
-		});
-		const data = await response.json();
-		console.log(data);
-		//id, antennaPort, epc, timestamp
-		for (let i = 0; i < data.length; i++) {
-			let id = data[i].id;
-			let antennaPort = data[i].antennaPort;
-			let epc = data[i].epc;
-			let timestamp = data[i].timestamp;
-			//create a new row
-			let table = document.getElementById("rfid");
-			table!.innerHTML = '<tr><th>Id</th><th>AntennaPort</th><th>Epc</th><th>Timestamp</th></tr>' + "<tr><td>" + id + "</td><td>" + antennaPort + "</td><td>" + epc + "</td><td>" + timestamp + "</td></tr>";
-		}
+// async function getRfid() {
+// 	try {
+// 		const response = await fetch("http://200.234.230.98:80/rfid", {
+// 			method: "GET",
+// 			headers: {
+// 				"Access-Control-Allow-Origin": "*",
+// 				"Access-Control-Allow-Methods": "*",
+// 				"Access-Control-Allow-Headers": "Content-Type",
+// 			},
+// 		});
+// 		const data = await response.json();
+// 		console.log(data);
+// 		//id, antennaPort, epc, timestamp
+// 		for (let i = 0; i < data.length; i++) {
+// 			let id = data[i].id;
+// 			let antennaPort = data[i].antennaPort;
+// 			let epc = data[i].epc;
+// 			let timestamp = data[i].timestamp;
+// 			//create a new row
+// 			let table = document.getElementById("rfid");
+// 			table!.innerHTML = '<tr><th>Id</th><th>AntennaPort</th><th>Epc</th><th>Timestamp</th></tr>' + "<tr><td>" + id + "</td><td>" + antennaPort + "</td><td>" + epc + "</td><td>" + timestamp + "</td></tr>";
+// 		}
 
 
 
 
-	} catch (error) {
-		console.log(error);
-	}
-}
+// 	} catch (error) {
+// 		console.log(error);
+// 	}
+// }
 
 
 // 	let request = new XMLHttpRequest();
@@ -255,22 +231,25 @@ const tgt = document.querySelector("#a");
 tgt!.addEventListener("click", () => {
 	postQuery(1, 1, 0)
 	getDoor()
+	getDoor()
 });
 
 
 
-const tgt2 = document.querySelector("#b");
-tgt2!.addEventListener("click", () => {
-	postQuery(1, 0, 1)
-	getDoor()
-  });
+// const tgt2 = document.querySelector("#b");
+// tgt2!.addEventListener("click", () => {
+// 	postQuery(1, 0, 1)
+// 	getDoor()
+// 	getDoor()
+//   });
 
 
 const tgt4 = document.querySelector("#d");
 tgt4!.addEventListener("click", () => {
 	postQuery(1, 0, 0)
 	getDoor()
-	getRfid();
+	getDoor()
+	// getRfid();
   });
 
 

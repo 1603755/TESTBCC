@@ -7,18 +7,19 @@ use api::services::{
     process_change_door,
     process_get_door,
     get_rfid_table,
-    process_get_login
+    process_get_login,
+    process_cafe
 };
-use std::fs;
+use std::{fs, thread};
 
-async fn get_html () -> impl Responder {
-    let html = fs::read_to_string("./web/home/index.html").unwrap();
-    HttpResponse::Ok()
-        .content_type("text/html; charset=utf-8")
-        .body(html)
-}
+// async fn get_html () -> impl Responder {
+//     let html = fs::read_to_string("./web/home/index.html").unwrap();
+//     HttpResponse::Ok()
+//         .content_type("text/html; charset=utf-8")
+//         .body(html)
+// }
 
-async fn get_login() -> impl Responder {
+async fn get_html() -> impl Responder {
     let html = fs::read_to_string("./web/index.html").unwrap();
     HttpResponse::Ok()
         .content_type("text/html; charset=utf-8")
@@ -32,6 +33,8 @@ async fn echo(req_body: String) -> impl Responder {
 
 #[actix_web::main]
 async fn main() -> std::io::Result<()> {
+    println!("Starting server...");
+    thread::sleep(std::time::Duration::from_secs(10));
     db::check_or_create_table().unwrap();
     println!("Hello, world!");
     HttpServer::new(|| {
@@ -48,10 +51,11 @@ async fn main() -> std::io::Result<()> {
             .service(process_change_door)
             .service(process_get_door)
             .service(get_rfid_table)
+            .service(process_cafe)
             .service(process_get_login)
             .route("/", web::get().to(get_html))
-            .route("/home", web::get().to(get_html))
-            .route("/index", web::get().to(get_login))
+            .route("/index", web::get().to(get_html))
+
     })
     .bind(("0.0.0.0", 80))?
     .run()
